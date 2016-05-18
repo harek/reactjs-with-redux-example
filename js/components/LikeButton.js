@@ -1,15 +1,19 @@
 import React, { PropTypes }  from 'react';
 
-const LikeButton = ({likes, onLikeClick}) => (
+const LikeButton = ({likes, onLikeClick, onAddLikeClick}) => (
     <div>
-      {likes}
-      <button onClick={() => onLikeClick()}>{'+1'}</button>
+      {likes.map(like => <div key={like.id}>{like.likes} <button onClick={() => onLikeClick(like.id)}>{'+1'}</button></div>)}
+      <button onClick={() => onAddLikeClick()}>{'+1'}</button>
     </div>
 )
 
 LikeButton.propTypes = {
-  likes: PropTypes.number.isRequired,
-  onLikeClick: PropTypes.func.isRequired
+  likes: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    likes: PropTypes.number.isRequired
+  }).isRequired).isRequired,
+  onAddLikeClick: PropTypes.func.isRequired,
+  onLikeClick: PropTypes.func.isRequired,
 }
 
 module.exports = LikeButton

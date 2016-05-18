@@ -1,5 +1,12 @@
-export const like = () => {
+export const addLike = () => {
   return {
-    type: 'LIKE'
+    type: 'ADD_LIKE'
+  }
+}
+
+export const like = (id) => {
+  return {
+    type: 'LIKE',
+    id: id
   }
 }

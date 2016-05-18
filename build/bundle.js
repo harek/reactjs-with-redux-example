@@ -100,9 +100,16 @@ process.umask = function() { return 0; };
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-var like = exports.like = function like() {
+var addLike = exports.addLike = function addLike() {
   return {
-    type: 'LIKE'
+    type: 'ADD_LIKE'
+  };
+};
+
+var like = exports.like = function like(id) {
+  return {
+    type: 'LIKE',
+    id: id
   };
 };
 
@@ -253,7 +260,7 @@ var LikeApp = function (_Component) {
   _createClass(LikeApp, [{
     key: 'render',
     value: function render() {
-      return _react2.default.createElement('div', null, _react2.default.createElement(_VisibleLikeButton2.default, null), _react2.default.createElement(_VisibleLikeButton2.default, null));
+      return _react2.default.createElement('div', null, _react2.default.createElement(_VisibleLikeButton2.default, null), _react2.default.createElement('hr', null), _react2.default.createElement(_VisibleLikeButton2.default, null));
     }
   }]);
 
@@ -276,13 +283,22 @@ function _interopRequireDefault(obj) {
 var LikeButton = function LikeButton(_ref) {
   var likes = _ref.likes;
   var onLikeClick = _ref.onLikeClick;
-  return _react2.default.createElement('div', null, likes, _react2.default.createElement('button', { onClick: function onClick() {
-      return onLikeClick();
+  var onAddLikeClick = _ref.onAddLikeClick;
+  return _react2.default.createElement('div', null, likes.map(function (like) {
+    return _react2.default.createElement('div', { key: like.id }, like.likes, ' ', _react2.default.createElement('button', { onClick: function onClick() {
+        return onLikeClick(like.id);
+      } }, '+1'));
+  }), _react2.default.createElement('button', { onClick: function onClick() {
+      return onAddLikeClick();
     } }, '+1'));
 };
 
 LikeButton.propTypes = {
-  likes: _react.PropTypes.number.isRequired,
+  likes: _react.PropTypes.arrayOf(_react.PropTypes.shape({
+    id: _react.PropTypes.number.isRequired,
+    likes: _react.PropTypes.number.isRequired
+  }).isRequired).isRequired,
+  onAddLikeClick: _react.PropTypes.func.isRequired,
   onLikeClick: _react.PropTypes.func.isRequired
 };
 
@@ -315,8 +331,11 @@ var mapStateToProps = function mapStateToProps(state) {
 
 var mapDispatchToProps = function mapDispatchToProps(dispatch) {
   return {
-    onLikeClick: function onLikeClick() {
-      return dispatch((0, _actions.like)());
+    onAddLikeClick: function onAddLikeClick() {
+      return dispatch((0, _actions.addLike)());
+    },
+    onLikeClick: function onLikeClick(id) {
+      return dispatch((0, _actions.like)(id));
     }
   };
 };
@@ -331,13 +350,32 @@ exports.default = VisibleLikeButton;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+function _toConsumableArray(arr) {
+  if (Array.isArray(arr)) {
+    for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) {
+      arr2[i] = arr[i];
+    }return arr2;
+  } else {
+    return Array.from(arr);
+  }
+}
+
 var like = function like() {
-  var state = arguments.length <= 0 || arguments[0] === undefined ? 0 : arguments[0];
+  var state = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
   var action = arguments[1];
 
   switch (action.type) {
+    case 'ADD_LIKE':
+      return [].concat(_toConsumableArray(state), [{ id: state.length + 1, likes: 0 }]);
     case 'LIKE':
-      return state + 1;
+      return state.map(function (like) {
+        if (like.id != action.id) {
+          return like;
+        }
+
+        return { id: action.id, likes: like.likes + 1 };
+      });
     default:
       return state;
   }

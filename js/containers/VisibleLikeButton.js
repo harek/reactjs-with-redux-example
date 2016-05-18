@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import { like } from '../actions/actions'
+import { addLike, like } from '../actions/actions'
 import LikeButton from '../components/LikeButton'
 
 const mapStateToProps = (state) => {
@@ -10,7 +10,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onLikeClick: () => dispatch(like())
+    onAddLikeClick: () => dispatch(addLike()),
+    onLikeClick: (id) => dispatch(like(id))
   }
 }
 

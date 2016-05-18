@@ -4,6 +4,7 @@ class LikeApp extends Component {
   render() {
     return <div>
       <VisibleLikeButton/>
+      <hr/>
       <VisibleLikeButton/>
     </div>;
   }
